@@ -1,0 +1,82 @@
+﻿@model IEnumerable<bsatovidal1_Job_Bank.Models.Posting>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-action="Index" method="get">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PostingSummary)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NumberOpen)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PostingFiles)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostingSummary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOpen)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @{
+                        int fileCount = item.PostingFiles.Count;
+                        if (fileCount > 0)
+                        {
+                            var firstFile = item.PostingFiles.FirstOrDefault(); ;
+                            if (fileCount > 1)
+                            {
+                                <a class="" role="button" data-toggle="collapse" href="#collapseDocs@(item.ID)" aria-expanded="false" aria-controls="collapseDocs@(item.ID)">
+                                    <span class="badge badge-info">@fileCount</span> Files...
+                                </a>
+                                <div class="collapse" id="collapseDocs@(item.ID)">
+                                    @{
+                                        foreach (var d in item.PostingFiles)
+                                        {
+                                            <a asp-action="Download" asp-route-id="@d.ID">@d.FileName</a> <br />
+                                        }
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <a asp-action="Download" asp-route-id="@firstFile.ID">@firstFile.FileName</a>
+                            }
+                        }
+                    }
+                </td>
+                <td>
+                    <a asp-action="Notification" asp-route-id="@item.ID" asp-route-Position="@item.Position.Name">Send Email</a> |
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>

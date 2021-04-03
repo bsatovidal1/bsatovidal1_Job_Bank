@@ -1,0 +1,24 @@
+﻿EntityFrameworkCore\Add-Migration -Context JobbBankContext -o Data\JBMigrations Initial
+Add this piece of code after the create Applicants table
+migrationBuilder.Sql(
+                @"
+                CREATE TRIGGER SetApplicantTimestampOnUpdate
+                AFTER UPDATE ON Applicants
+                BEGIN
+                    UPDATE Applicants
+                    SET RowVersion = randomblob(8)
+                    WHERE rowid = NEW.rowid;
+                END
+            ");
+                    migrationBuilder.Sql(
+                        @"
+                CREATE TRIGGER SetApplicantTimestampOnInsert
+                AFTER INSERT ON Applicants
+                BEGIN
+                    UPDATE Applicants
+                    SET RowVersion = randomblob(8)
+                    WHERE rowid = NEW.rowid;
+                END
+            ");
+EntityFrameworkCore\Update-Database -Context JobbBankContext 
+EntityFrameworkCore\Update-Database -Context ApplicationDbContext
